@@ -13,7 +13,15 @@ points(as.numeric(rownames(df2)),df2[,1], col = "blue",  pch = "+")
 ######################
 library(dgof)
 range=max1-min1
-sorted1<- df1[order(xs),]
-sorted2<- df2[order(xs),]
+sorted1<- df1[order(df1$xs),1]
+sorted2<- df2[order(df2$xs),1]
 
 maxp=0
+t<- ks.test(sorted1,sorted2)
+t$p.value
+res <- numeric(length = length(1:10))
+for (part in 1:10) { 
+    t<- ks.test(df1[df1$xs>min1&(df1$xs<(min1+part)),1],df2[df2$xs>min1&(df2$xs<(min1+part)),1])
+    res[part]<- t$p.value
+}
+res
