@@ -28,3 +28,20 @@ for (i in 1:part_num){
     res[i]<- t$p.value
 }
 res
+############################## overlapped parts
+small_step=1
+res2 <- numeric(length = part_num)
+i<-min1
+j<-1
+while(i <max1){
+    t<- ks.test(df1[(df1$xs>i)&(df1$xs<(i+part_size)),1],df2[(df2$xs>i)&(df2$xs<(i+part_size)),1])
+    if(t$p.value>=0.5){
+        res2[j]<- t$p.value
+        j<-j+1
+        i<-i+part_size
+    }
+    else{
+        i<-i+1
+    }
+    
+res2
