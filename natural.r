@@ -18,6 +18,7 @@ mainest <- length(ii[,1])
 ######################################partitioning factors
 max1<- max(df1[,c(rownames(ii[mainest,]))])
 min1<- min(df1[,c(rownames(ii[mainest,]))])
+median1 <- median(df1[,c(rownames(ii[mainest,]))])
 n <- length(df1[,1])
 if(n>100) {  
     min_num<-30
@@ -49,4 +50,36 @@ for (j in 1:(mainest-1))
                           c(rownames(ii[mainest,]),rownames(ii[j,]))])
         res[i,j]<- t
     }
+
+############################## overlapped parts
+small_step=length(df1[(df1[,c(rownames(ii[mainest,]))]>median1),c(rownames(ii[mainest,]))])/(max1-median1)
+res2 <- data.frame(matrix(ncol=(mainest-1),nrow=0))
+colnames(res2)<- rownames(ii[1:(mainest-1),])
+i<-min1
+k<-1
+while(i <max1){
+    restemp <- numeric(length = (mainest-1))
+    for (j in 1:(mainest-1))
+    {
+        t<- peacock2(df1[(df1[,c(rownames(ii[mainest,]))]>i)&
+            (df1[,c(rownames(ii[mainest,]))]<(i+part_size)),c(rownames(ii[mainest,]),rownames(ii[j,]))],
+            df2[(df2[,c(rownames(ii[mainest,]))]>i)&
+            (df2[,c(rownames(ii[mainest,]))]<(i+part_size)),c(rownames(ii[mainest,]),rownames(ii[j,]))])
+        if(!is.nan(t)){
+                    restemp[j]=t
+        }
+
+    }
+    if(length(restemp[restemp>=0.5])>=(mainest-1)){
+        #print(cat("____________",i))
+        res2[k,]<- restemp
+        k<-k+1
+        i<-i+part_size
+    }
+    else{
+        i<-i+small_step
+    }
+}
+    
+res2
 
