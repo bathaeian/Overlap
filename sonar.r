@@ -3,21 +3,20 @@ library(caret)
 library(fasano.franceschini.test)
 library(dplyr)
 ###################################datasets
-#---------------------Ionosphere
-data(Ionosphere)
-summary(Ionosphere)
-Ionosphere <- Ionosphere[,-c(1,2)]
-df1<-Ionosphere[Ionosphere$Class=="bad",]
-df2<-Ionosphere[Ionosphere$Class=="good",]
+#---------------------Sonar
+data(Sonar)
+summary(Sonar)
+df1<-Sonar[Sonar$Class=="R",]
+df2<-Sonar[Sonar$Class=="M",]
 control <- trainControl(method="repeatedcv", number=10, repeats=3)
-model <- train(Class~., data=Ionosphere, method="lvq", preProcess="scale", trControl=control)
+model <- train(Class~., data=Sonar, method="lvq", preProcess="scale", trControl=control)
 ##########################estimate most important variable=mainest
 # estimate variable importance
 importance <- varImp(model, scale=FALSE)
 ii<- importance$importance[order(importance$importance[,1]),]
-anchor <- grep((rownames(ii)[nrow(ii)]), colnames(df1))[1]
+anchor <- grep((rownames(ii)[nrow(ii)]), colnames(df1))
 
-#########result= glucose=2 
+#########result= 
 max1<- min(max(df1[,anchor]),max(df2[,anchor]))
 min1<- max(min(df1[,anchor]),min(df2[,anchor]))
 
@@ -25,6 +24,7 @@ min1<- max(min(df1[,anchor]),min(df2[,anchor]))
 min_s<-5
 min_p <- 0.05
 n <- length(df1[,1])
+
 #########################function findOV
 findOV <- function(part_size) {
     part_num= n/(part_size)
@@ -70,42 +70,6 @@ findOV <- function(part_size) {
     print(ov_size)
     print("===============");
 }
-#########################################33Results
-classification_error=14
+#######################results
+classification_error=16%
 overlaped=0
-[1] "----------"
-[1] 20
-      pvalue   x1start    x1stop       size
-1 0.05397916 0.5525889 0.6804206 0.04761905
-[1] 4.761905
-[1] "==============="
-[1] "----------"
-[1] 30
-      pvalue   x1start    x1stop       size
-1 0.05090106 0.5014562 0.6932038 0.07142857
-[1] 7.142857
-[1] "==============="
-[1] "----------"
-[1] 40
-      pvalue   x1start    x1stop      size
-1 0.06511239 0.5014562 0.7571197 0.1031746
-[1] 10.31746
-[1] "==============="
-[1] "----------"
-[1] 50
-      pvalue   x1start    x1stop      size
-1 0.05779691 0.4311487 0.7507281 0.1111111
-[1] 11.11111
-[1] "==============="
-[1] "----------"
-[1] 60
-     pvalue   x1start   x1stop      size
-1 0.0506901 0.4311487 0.814644 0.1190476
-[1] 11.90476
-[1] "==============="
-[1] "----------"
-[1] 70
-[1] pvalue  x1start x1stop  size   
-<0 rows> (or 0-length row.names)
-[1] 100
-[1] "==============="
